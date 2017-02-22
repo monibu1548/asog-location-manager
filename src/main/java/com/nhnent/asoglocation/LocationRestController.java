@@ -36,9 +36,7 @@ public class LocationRestController {
 
 	@RequestMapping(value = "/location/template", method = RequestMethod.POST)
 	public String addTemplateLocation() {
-		locationManager.addTemplateLocation();
-		logger.info("call add template location");
-		return "home";
+		return locationManager.addTemplateLocation();
 	}
 
 	@RequestMapping(value = "/location/template/{templateId}", method = RequestMethod.GET)
