@@ -1,10 +1,25 @@
 package com.nhnent.asoglocation.service;
 
+import javax.inject.Inject;
+
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import redis.clients.jedis.Jedis;
 
-public class LocationHashImpl implements LocationManager{
+@Component
+public class LocationCellImpl implements LocationManager{
 
+	private Jedis jedis;
+
+	@Inject
+	LocationCellImpl(@Value("${redis.url}") String url, @Value("${redis.password}")String password) {
+		jedis = new Jedis(url, 6379);
+		if(password != null && !password.isEmpty()) {
+			jedis.auth(password);
+		}
+	}
+	
 	@Override
 	public String addTemplateLocation() {
 		// TODO Auto-generated method stub
