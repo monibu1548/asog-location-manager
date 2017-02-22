@@ -1,0 +1,1 @@
+# asog-location-manager
