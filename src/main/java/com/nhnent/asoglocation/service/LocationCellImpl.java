@@ -2,6 +2,8 @@ package com.nhnent.asoglocation.service;
 
 import javax.inject.Inject;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -11,6 +13,8 @@ import redis.clients.jedis.Jedis;
 public class LocationCellImpl implements LocationManager{
 
 	private Jedis jedis;
+	
+	private final static Logger logger = LoggerFactory.getLogger(LocationCellImpl.class);
 
 	@Inject
 	LocationCellImpl(@Value("${redis.url}") String url, @Value("${redis.password}")String password) {
@@ -22,6 +26,13 @@ public class LocationCellImpl implements LocationManager{
 
 	@Override
 	public String addTemplateLocation() {
+		String getResult = jedis.hget("template", "count");
+		if (getResult == null) {
+			return "error";
+		}
+
+		int currentIndex = Integer.valueOf(getResult);
+		
 		// TODO Auto-generated method stub
 		return null;
 	}
