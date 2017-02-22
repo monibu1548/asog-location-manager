@@ -19,7 +19,7 @@ public class LocationCellImpl implements LocationManager{
 			jedis.auth(password);
 		}
 	}
-	
+
 	@Override
 	public String addTemplateLocation() {
 		// TODO Auto-generated method stub
@@ -27,7 +27,7 @@ public class LocationCellImpl implements LocationManager{
 	}
 
 	@Override
-	public String findTemplateLocation() {
+	public String findTemplateLocation(int templateId) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -51,7 +51,7 @@ public class LocationCellImpl implements LocationManager{
 	}
 
 	@Override
-	public String findMemberLocation() {
+	public String findMemberLocation(int memberId) {
 		// TODO Auto-generated method stub
 		return null;
 	}

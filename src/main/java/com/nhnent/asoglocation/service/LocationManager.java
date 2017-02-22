@@ -4,7 +4,7 @@ public interface LocationManager {
 
 	String addTemplateLocation();
 
-	String findTemplateLocation();
+	String findTemplateLocation(int templateId);
 
 	String addUrlLocation(String vote);
 
@@ -12,5 +12,5 @@ public interface LocationManager {
 
 	String addMemberLocation();
 
-	String findMemberLocation();
+	String findMemberLocation(int memberId);
 }

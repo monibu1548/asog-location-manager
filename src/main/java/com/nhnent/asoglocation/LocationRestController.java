@@ -5,6 +5,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -26,10 +27,9 @@ public class LocationRestController {
 		return "home";
 	}
 
-	@RequestMapping(value = "/location/template", method = RequestMethod.GET)
-	public String findTemplateLocation() {
-		logger.info("call find template location");
-		return locationManager.findTemplateLocation();
+	@RequestMapping(value = "/location/template/{templateId}", method = RequestMethod.GET)
+	public String findTemplateLocation(@PathVariable(value = "templateId") int templateId) {
+		return locationManager.findTemplateLocation(templateId);
 	}
 
 	@RequestMapping(value = "/location/url", method = RequestMethod.POST)
@@ -52,9 +52,9 @@ public class LocationRestController {
 		return locationManager.addMemberLocation();
 	}
 
-	@RequestMapping(value = "/location/member", method = RequestMethod.GET)
-	public String findMemberLocation() {
+	@RequestMapping(value = "/location/member/{memberId}", method = RequestMethod.GET)
+	public String findMemberLocation(@PathVariable(value = "memberId") int memberId) {
 		logger.info("call find member location");
-		return locationManager.findTemplateLocation();
+		return locationManager.findTemplateLocation(memberId);
 	}
 }
