@@ -40,11 +40,11 @@ public class LocationManager{
 		}
 
 		int dbIndex = getDBIndexByKey(vote);
-		if (dbIndex != 0 || dbIndex != 1) {
+		if (dbIndex != 0 && dbIndex != 1) {
 			jsonObject.addProperty("result", "url hash error");
 			return jsonObject.toString();
 		}
-			jedis.hset("vote", vote, String.valueOf(dbIndex));
+			jedis.hset("url", vote, String.valueOf(dbIndex));
 			jsonObject.addProperty("db", dbIndex);
 
 		jsonObject.addProperty("result", "success");
@@ -52,6 +52,7 @@ public class LocationManager{
 	}
 
 	public String findUrlLocation(String vote) {
+		
 		String getResult = jedis.hget("url", vote);
 
 		JsonObject jsonObject = new JsonObject();
@@ -61,9 +62,10 @@ public class LocationManager{
 		}
 		
 		int dbIndex = getDBIndexByKey(vote);
-		
-		if (dbIndex != 0 || dbIndex != 1) {
+
+		if (dbIndex != 0 && dbIndex != 1) {
 			jsonObject.addProperty("result", "url hash error");
+			logger.info("hash result : " + dbIndex);
 			return jsonObject.toString();
 		}
 
