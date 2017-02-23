@@ -34,34 +34,14 @@ public class LocationRestController {
 		}
 	}
 
-	@RequestMapping(value = "/location/template/{templateName}", method = RequestMethod.POST, produces="application/json;charset=UTF-8")
-	public String addTemplateLocation(@PathVariable(value = "templateName") String templateName) {
-		return locationManager.addTemplateLocation(templateName);
-	}
-
-	@RequestMapping(value = "/location/template/{templatePrimaryKey}", method = RequestMethod.GET, produces="application/json;charset=UTF-8")
-	public String findTemplateLocation(@PathVariable(value = "templatePrimaryKey") String templatePrimaryKey) {
-		return locationManager.findTemplateLocation(templatePrimaryKey);
-	}
-
 	@RequestMapping(value = "/location/url/{hashedUrl}", method = RequestMethod.POST, produces="application/json;charset=UTF-8")
 	public String addUrlLocation(@PathVariable(value = "hashedUrl") String hashedUrl) {
 		return locationManager.addUrlLocation(hashedUrl);
 	}
 
-	@RequestMapping(value = "/location/url{hashedUrl}", method = RequestMethod.GET, produces="application/json;charset=UTF-8")
+	@RequestMapping(value = "/location/url/{hashedUrl}", method = RequestMethod.GET, produces="application/json;charset=UTF-8")
 	public String findUrlLocation(@PathVariable(value = "hashedUrl") String hashedUrl) {
 		return locationManager.findUrlLocation(hashedUrl);
-	}
-	
-	@RequestMapping(value = "/location/member/{memberUuid}", method = RequestMethod.POST, produces="application/json;charset=UTF-8")
-	public String addMemberLocation(@PathVariable(value = "memberUuid") String memberUuid) {
-		return locationManager.addMemberLocation(memberUuid);
-	}
-
-	@RequestMapping(value = "/location/member/{memberUuid}", method = RequestMethod.GET, produces="application/json;charset=UTF-8")
-	public String findMemberLocation(@PathVariable(value = "memberUuid") String memberUuid) {
-		return locationManager.findMemberLocation(memberUuid);
 	}
 
 }
