@@ -34,59 +34,34 @@ public class LocationRestController {
 		}
 	}
 
-	@RequestMapping(value = "/location/template", method = RequestMethod.POST)
-	public String addTemplateLocation() {
-		return locationManager.addTemplateLocation();
+	@RequestMapping(value = "/location/template/{templateName}", method = RequestMethod.POST, produces="application/json;charset=UTF-8")
+	public String addTemplateLocation(@PathVariable(value = "templateName") String templateName) {
+		return locationManager.addTemplateLocation(templateName);
 	}
 
-	@RequestMapping(value = "/location/template/{templateId}", method = RequestMethod.GET)
-	public String findTemplateLocation(@PathVariable(value = "templateId") int templateId) {
-		return locationManager.findTemplateLocation(templateId);
+	@RequestMapping(value = "/location/template/{templatePrimaryKey}", method = RequestMethod.GET, produces="application/json;charset=UTF-8")
+	public String findTemplateLocation(@PathVariable(value = "templatePrimaryKey") String templatePrimaryKey) {
+		return locationManager.findTemplateLocation(templatePrimaryKey);
 	}
 
-	@RequestMapping(value = "/location/url", method = RequestMethod.POST)
-	public String addUrlLocation(HttpServletRequest request) {
-		String vote = request.getParameter("vote");
-		logger.info("call add url location");
-		return locationManager.addUrlLocation(vote);
+	@RequestMapping(value = "/location/url/{hashedUrl}", method = RequestMethod.POST, produces="application/json;charset=UTF-8")
+	public String addUrlLocation(@PathVariable(value = "hashedUrl") String hashedUrl) {
+		return locationManager.addUrlLocation(hashedUrl);
 	}
 
-	@RequestMapping(value = "/location/url", method = RequestMethod.GET)
-	public String findUrlLocation(HttpServletRequest request) {
-		String vote = request.getParameter("vote");
-		logger.info("call find url location");
-		return locationManager.findUrlLocation(vote);
+	@RequestMapping(value = "/location/url{hashedUrl}", method = RequestMethod.GET, produces="application/json;charset=UTF-8")
+	public String findUrlLocation(@PathVariable(value = "hashedUrl") String hashedUrl) {
+		return locationManager.findUrlLocation(hashedUrl);
 	}
 	
-	@RequestMapping(value = "/location/member", method = RequestMethod.POST)
-	public String addMemberLocation() {
-		logger.info("call add member location");
-		return locationManager.addMemberLocation();
+	@RequestMapping(value = "/location/member/{memberUuid}", method = RequestMethod.POST, produces="application/json;charset=UTF-8")
+	public String addMemberLocation(@PathVariable(value = "memberUuid") String memberUuid) {
+		return locationManager.addMemberLocation(memberUuid);
 	}
 
-	@RequestMapping(value = "/location/member/{memberId}", method = RequestMethod.GET)
-	public String findMemberLocation(@PathVariable(value = "memberId") int memberId) {
-		logger.info("call find member location");
-		return locationManager.findTemplateLocation(memberId);
+	@RequestMapping(value = "/location/member/{memberUuid}", method = RequestMethod.GET, produces="application/json;charset=UTF-8")
+	public String findMemberLocation(@PathVariable(value = "memberUuid") String memberUuid) {
+		return locationManager.findTemplateLocation(memberUuid);
 	}
 
-	@RequestMapping(value = "/debug/member/get", method = RequestMethod.GET)
-	public String debugMemberGet() {
-		return jedis.hget("member", "counter");
-	}
-
-	@RequestMapping(value = "/debug/member/set/{memberId}", method = RequestMethod.GET)
-	public String debugMemberSet(@PathVariable(value = "memberId") int memberId) {
-		return String.valueOf(jedis.hset("member", "counter", String.valueOf(memberId)));
-	}
-	
-	@RequestMapping(value = "/debug/template/get", method = RequestMethod.GET)
-	public String debugTemplateGet() {
-		return jedis.hget("template", "counter");
-	}
-	
-	@RequestMapping(value = "/debug/template/set/{templateId}", method = RequestMethod.GET)
-	public String debugTemplateSet(@PathVariable(value = "templateId") int templateId) {
-		return String.valueOf(jedis.hset("template", "counter", String.valueOf(templateId)));
-	}
 }

@@ -1,5 +1,8 @@
 package com.nhnent.asoglocation.service;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+
 import javax.inject.Inject;
 
 import org.slf4j.Logger;
@@ -27,28 +30,69 @@ public class LocationCellImpl implements LocationManager{
 	}
 
 	@Override
-	public String addTemplateLocation() {
-		int templateIndex = getSafeIndex("template");
-		if (templateIndex == 0) {
-			return "error";
-		}
-
-		int dbIndex = integerHash(templateIndex);
-		jedis.hset("template", String.valueOf(templateIndex), String.valueOf(dbIndex));
-		logger.info("hset template " + templateIndex + " " + dbIndex);
+	public String addTemplateLocation(String templateName) {
 
 		JsonObject jsonObject = new JsonObject();
-		jsonObject.addProperty("id", templateIndex);
-		jsonObject.addProperty("db", dbIndex);
+		if (templateName ==  null) {
+			jsonObject.addProperty("result", "template name is empty");
+			return jsonObject.toString();
+		}
+
+		String templatePrimaryKey = hashTemplateName(templateName);
+
+		// divide
+		jsonObject.addProperty("result", "success");
+		jsonObject.addProperty("pk", templatePrimaryKey);
+		if (templateName.length() < 10) {
+			jedis.hset("template", templatePrimaryKey, "0");
+			jsonObject.addProperty("db", 0);
+		} else {
+			jedis.hset("template", templatePrimaryKey, "1");
+			jsonObject.addProperty("db", 1);
+		}
+
 		return jsonObject.toString();
 	}
 
-	@Override
-	public String findTemplateLocation(int templateId) {
-		String getResult = jedis.hget("template", String.valueOf(templateId));
-		logger.info("hget template " + templateId + " : " + getResult);
+	private String hashTemplateName(String templateName) {
 
+		String uniqueTemplateName = templateName + + System.currentTimeMillis();
+		String SHA256;
+		try{
+			MessageDigest md = MessageDigest.getInstance("SHA-256"); 
+			md.update(uniqueTemplateName.getBytes()); 
+			byte byteData[] = md.digest();
+			StringBuffer sb = new StringBuffer(); 
+			for(int i = 0 ; i < byteData.length ; i++){
+				sb.append(Integer.toString((byteData[i]&0xff) + 0x100, 16).substring(1));
+			}
+
+			/* cut hashresult for length limit */
+			SHA256 = sb.toString().substring(0, 50);
+		} catch(NoSuchAlgorithmException e){
+			logger.debug("No Such Algorithm Exception Error in calcHshSHA256(), detail here : " + e.getMessage());
+			SHA256 = null; 
+		}
+
+		return SHA256;
+	}
+
+	@Override
+	public String findTemplateLocation(String templatePrimaryKey) {
+		
 		JsonObject jsonObject = new JsonObject();
+		if (templatePrimaryKey ==  null) {
+			jsonObject.addProperty("result", "template name is empty");
+			return jsonObject.toString();
+		}
+
+		String getResult = jedis.hget("template", templatePrimaryKey);
+		if (getResult == null) {
+			jsonObject.addProperty("result", "fail to find db index by template pk : " + templatePrimaryKey);
+			return jsonObject.toString();
+		}
+
+		jsonObject.addProperty("result", "success");
 		jsonObject.addProperty("db", Integer.valueOf(getResult));
 		return jsonObject.toString();
 	}
@@ -56,11 +100,22 @@ public class LocationCellImpl implements LocationManager{
 	@Override
 	public String addUrlLocation(String vote) {
 
-		int dbIndex = voteHash(vote);
-		jedis.hset("url", vote, String.valueOf(dbIndex));
-
 		JsonObject jsonObject = new JsonObject();
-		jsonObject.addProperty("db", dbIndex);
+		if (vote ==  null) {
+			jsonObject.addProperty("result", "vote hash value is empty");
+			return jsonObject.toString();
+		}
+
+		char firstCharacter = vote.charAt(0);
+		if (firstCharacter > 'm'){
+			jedis.hset("vote", vote, "0");
+			jsonObject.addProperty("db", 0);
+		} else {
+			jedis.hset("vote", vote, "1");
+			jsonObject.addProperty("db", 1);
+		}
+
+		jsonObject.addProperty("result", "success");
 		return jsonObject.toString();
 	}
 
@@ -74,47 +129,43 @@ public class LocationCellImpl implements LocationManager{
 	}
 
 	@Override
-	public String addMemberLocation() {
-		int memberIndex = getSafeIndex("member");
-		if (memberIndex == 0) {
-			return "error";
-		}
-
-		int dbIndex = integerHash(memberIndex);
-		jedis.hset("member", String.valueOf(memberIndex), String.valueOf(dbIndex));
+	public String addMemberLocation(String memberUuid) {
 
 		JsonObject jsonObject = new JsonObject();
-		jsonObject.addProperty("id", memberIndex);
-		jsonObject.addProperty("db", dbIndex);
+		if (memberUuid == null) {
+			jsonObject.addProperty("result", "memberUUID is null");
+			return jsonObject.toString();
+		}
+
+		if (memberUuid.length() > 20) {
+			jedis.hset("member", memberUuid, "0");
+			jsonObject.addProperty("db", 0);
+		} else {
+			jedis.hset("member", memberUuid, "1");
+			jsonObject.addProperty("db", 1);
+		}
+		jsonObject.addProperty("result", "success");
 		return jsonObject.toString();
 	}
 
 	@Override
-	public String findMemberLocation(int memberId) {
-		String getResult = jedis.hget("member", String.valueOf(memberId));
-
+	public String findMemberLocation(String memberUuid) {
+		
 		JsonObject jsonObject = new JsonObject();
+		if (memberUuid == null) {
+			jsonObject.addProperty("result", "memberUUID is null");
+			return jsonObject.toString();
+		}
+
+		String getResult = jedis.hget("member", memberUuid);
+		if (getResult == null) {
+			logger.info("findMemberLocation : " + getResult);
+			jsonObject.addProperty("result", "fail to find db index by memberUuid : " + memberUuid);
+			return jsonObject.toString();
+		}
+
 		jsonObject.addProperty("db", Integer.valueOf(getResult));
 		return jsonObject.toString();
 	}
 
-	private synchronized int getSafeIndex(String type){
-		String getResult = jedis.hget(type, "counter");
-		if (getResult == null) {
-			return 0;
-		}
-		int currentIndex = Integer.valueOf(getResult);
-		currentIndex += 1;
-		jedis.hset(type, "counter", String.valueOf(currentIndex));
-		return currentIndex;
-	}
-
-	private int integerHash(int value) {
-		return value%2;
-	}
-
-	private int voteHash(String vote) {
-		char ch = vote.charAt(vote.length()-1);
-		return ch%2;
-	}
 }

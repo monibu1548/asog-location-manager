@@ -2,15 +2,15 @@ package com.nhnent.asoglocation.service;
 
 public interface LocationManager {
 
-	String addTemplateLocation();
+	String addTemplateLocation(String templateId);
 
-	String findTemplateLocation(int templateId);
+	String findTemplateLocation(String templateId);
 
-	String addUrlLocation(String vote);
+	String addUrlLocation(String hashedUrl);
 
-	String findUrlLocation(String vote);
+	String findUrlLocation(String hashedUrl);
 
-	String addMemberLocation();
+	String addMemberLocation(String memberId);
 
-	String findMemberLocation(int memberId);
+	String findMemberLocation(String memberId);
 }
