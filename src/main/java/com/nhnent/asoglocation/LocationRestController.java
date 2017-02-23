@@ -61,7 +61,7 @@ public class LocationRestController {
 
 	@RequestMapping(value = "/location/member/{memberUuid}", method = RequestMethod.GET, produces="application/json;charset=UTF-8")
 	public String findMemberLocation(@PathVariable(value = "memberUuid") String memberUuid) {
-		return locationManager.findTemplateLocation(memberUuid);
+		return locationManager.findMemberLocation(memberUuid);
 	}
 
 }

@@ -54,29 +54,6 @@ public class LocationCellImpl implements LocationManager{
 		return jsonObject.toString();
 	}
 
-	private String hashTemplateName(String templateName) {
-
-		String uniqueTemplateName = templateName + + System.currentTimeMillis();
-		String SHA256;
-		try{
-			MessageDigest md = MessageDigest.getInstance("SHA-256"); 
-			md.update(uniqueTemplateName.getBytes()); 
-			byte byteData[] = md.digest();
-			StringBuffer sb = new StringBuffer(); 
-			for(int i = 0 ; i < byteData.length ; i++){
-				sb.append(Integer.toString((byteData[i]&0xff) + 0x100, 16).substring(1));
-			}
-
-			/* cut hashresult for length limit */
-			SHA256 = sb.toString().substring(0, 50);
-		} catch(NoSuchAlgorithmException e){
-			logger.debug("No Such Algorithm Exception Error in calcHshSHA256(), detail here : " + e.getMessage());
-			SHA256 = null; 
-		}
-
-		return SHA256;
-	}
-
 	@Override
 	public String findTemplateLocation(String templatePrimaryKey) {
 		
@@ -168,4 +145,26 @@ public class LocationCellImpl implements LocationManager{
 		return jsonObject.toString();
 	}
 
+	private String hashTemplateName(String templateName) {
+
+		String uniqueTemplateName = templateName + + System.currentTimeMillis();
+		String SHA256;
+		try{
+			MessageDigest md = MessageDigest.getInstance("SHA-256"); 
+			md.update(uniqueTemplateName.getBytes()); 
+			byte byteData[] = md.digest();
+			StringBuffer sb = new StringBuffer(); 
+			for(int i = 0 ; i < byteData.length ; i++){
+				sb.append(Integer.toString((byteData[i]&0xff) + 0x100, 16).substring(1));
+			}
+
+			/* cut hashresult for length limit */
+			SHA256 = sb.toString().substring(0, 50);
+		} catch(NoSuchAlgorithmException e){
+			logger.debug("No Such Algorithm Exception Error in calcHshSHA256(), detail here : " + e.getMessage());
+			SHA256 = null; 
+		}
+
+		return SHA256;
+	}
 }
