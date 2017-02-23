@@ -44,8 +44,8 @@ public class LocationManager{
 			jsonObject.addProperty("result", "url hash error");
 			return jsonObject.toString();
 		}
-			jedis.hset("url", vote, String.valueOf(dbIndex));
-			jsonObject.addProperty("db", dbIndex);
+		jedis.hset("url", vote, String.valueOf(dbIndex));
+		jsonObject.addProperty("db", dbIndex);
 
 		jsonObject.addProperty("result", "success");
 		return jsonObject.toString();
@@ -69,6 +69,7 @@ public class LocationManager{
 			return jsonObject.toString();
 		}
 
+		jsonObject.addProperty("result", "success");
 		jsonObject.addProperty("db", dbIndex);
 		return jsonObject.toString();
 	}
