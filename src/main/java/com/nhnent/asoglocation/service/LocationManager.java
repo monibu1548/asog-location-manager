@@ -13,19 +13,23 @@ import org.springframework.stereotype.Component;
 import com.google.gson.JsonObject;
 
 import redis.clients.jedis.Jedis;
+import redis.clients.jedis.JedisPool;
+import redis.clients.jedis.JedisPoolConfig;
 
 @Component
 public class LocationManager{
 
 	private static final int HASHED_KEY_LEN = 50;
 
+	private JedisPool jedisPool;
 	private Jedis jedis;
 	
 	private final static Logger logger = LoggerFactory.getLogger(LocationManager.class);
 
 	@Inject
 	LocationManager(@Value("${redis.url}") String url, @Value("${redis.password}")String password) {
-		jedis = new Jedis(url, 6379);
+		jedisPool = new JedisPool(new JedisPoolConfig(), url, 6379);
+		jedis = jedisPool.getResource();
 		if(password != null && !password.isEmpty()) {
 			jedis.auth(password);
 		}
